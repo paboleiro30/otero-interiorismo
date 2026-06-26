@@ -759,8 +759,7 @@
         }
 
         .form-grid-modern input,
-        .form-grid-modern textarea,
-        .form-grid-modern select {
+        .form-grid-modern textarea {
             width: 100%;
             padding: 14px 18px;
             background-color: #14100e; 
@@ -776,23 +775,44 @@
             color: rgba(203, 186, 176, 0.45);
         }
         .form-grid-modern input:focus,
-        .form-grid-modern textarea:focus,
-        .form-grid-modern select:focus {
+        .form-grid-modern textarea:focus {
             outline: none;
             border-color: #dfb15b;
             background-color: #1a1512;
             box-shadow: 0 0 12px rgba(223, 177, 91, 0.05);
         }
-        
-        .form-grid-modern select {
-            cursor: default;
-            appearance: none;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='gray'><path d='M7 10l5 5 5-5z'/></svg>");
-            background-repeat: no-repeat;
-            background-position: right 15px center;
-            pointer-events: none; 
-            color: rgba(255, 255, 255, 0.8);
+
+        /* CONTENEDOR DE LA RAZÓN DE CORREO */
+        .razon-container {
+            position: relative;
+            width: 100%;
         }
+
+        /* BOTÓN PEQUEÑO PARA DESELEGIR EL PLAN */
+        .btn-clear-plan {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.08);
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            font-size: 14px;
+            line-height: 1;
+            cursor: pointer;
+            display: none; /* Se activa dinámicamente por JS */
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .btn-clear-plan:hover {
+            background: #dfb15b;
+            color: #090706;
+        }
+        
         .form-grid-modern textarea {
             min-height: 100px;
             resize: vertical;
@@ -1115,7 +1135,7 @@
                         <h2>Planes de Diseño<br><span>Estructurados a tu medida.</span></h2>
                     </div>
                     <div class="services-intro">
-                        Selecciona el esquema ideal para transformar tus espacios. Al elegir un plan, el formulario inferior se adaptará automáticamente con tu preferencia de interés de forma instantánea.
+                        Selecciona el esquema ideal para transformar tus espacios o escribe directamente tus necesidades específicas en la caja de texto del formulario inferior.
                     </div>
                 </div>
 
@@ -1134,7 +1154,7 @@
                             <li>2 rondas de ajustes incluidas</li>
                             <li>Entrega en memoria digital</li>
                         </ul>
-                        <button type="button" class="plan-btn" onclick="seleccionarPlanPorBoton('trazo')">
+                        <button type="button" class="plan-btn" onclick="seleccionarPlanPorBoton('Primer Trazo (1 Espacio)')">
                             Elegir Plan
                         </button>
                     </div>
@@ -1153,7 +1173,7 @@
                             <li>2 rondas de ajustes incluidas</li>
                             <li>Entrega en memoria digital</li>
                         </ul>
-                        <button type="button" class="plan-btn" onclick="seleccionarPlanPorBoton('desarrollo')">
+                        <button type="button" class="plan-btn" onclick="seleccionarPlanPorBoton('Desarrollo (3 Espacios)')">
                             Elegir Plan
                         </button>
                     </div>
@@ -1172,7 +1192,7 @@
                             <li>2 rondas de ajustes incluidas</li>
                             <li>Entrega en memoria digital</li>
                         </ul>
-                        <button type="button" class="plan-btn" onclick="seleccionarPlanPorBoton('composicion')">
+                        <button type="button" class="plan-btn" onclick="seleccionarPlanPorBoton('Composición (5 Espacios)')">
                             Elegir Plan
                         </button>
                     </div>
@@ -1183,7 +1203,7 @@
                     <div class="contacto-grid-modern">
                         <div class="contacto-header-side">
                             <h3>¿Listo para iniciar?</h3>
-                            <p class="notice">Selecciona un plan arriba para definir tu interés o agenda directamente una asesoría general por WhatsApp.</p>
+                            <p class="notice">Selecciona un plan arriba para definir tu interés de forma automática o escribe libremente tu motivo de consulta.</p>
                             
                             <div class="contacto-channels">
                                 <div class="channel-card">
@@ -1207,14 +1227,14 @@
                             </div>
                         </div>
                         
-                        <!-- Formulario conectado directamente a tu correo -->
+                        <!-- Formulario de FormSubmit -->
                         <form class="form-grid-modern" action="https://formsubmit.co/pablosalazar3013@gmail.com" method="POST">
                             
                             <!-- REDIRECCIÓN AUTOMÁTICA COHESIVA -->
                             <input type="hidden" name="_next" value="https://paboleiro30.github.io/otero-interiorismo/">
 
-                            <!-- Configuraciones de personalización del envío -->
-                            <input type="hidden" name="_subject" value="¡Nuevo Cliente - Otero Interiorismo!">
+                            <!-- Asunto base dinámico que se reescribe por JavaScript -->
+                            <input type="hidden" id="form-subject" name="_subject" value="Contacto General - Otero Interiorismo">
                             <input type="hidden" name="_captcha" value="false">
 
                             <div class="form-row-modern">
@@ -1222,13 +1242,11 @@
                                 <input type="email" name="Correo de Contacto" placeholder="Correo electrónico" required />
                             </div>
                             
-                            <!-- Dropdown Automatizado No Modificable -->
-                            <select id="select-plan" name="Plan Seleccionado" required>
-                                <option value="" disabled selected>Selecciona un esquema arriba para activar</option>
-                                <option value="trazo">Plan Primer Trazo (1 Espacio)</option>
-                                <option value="desarrollo">Plan Desarrollo (3 Espacios)</option>
-                                <option value="composicion">Plan Composición (5 Espacios)</option>
-                            </select>
+                            <!-- Campo de Razón de Correo Inteligente (Dinámico) -->
+                            <div class="razon-container">
+                                <input type="text" id="razon-input" name="Razon del Correo" placeholder="Razón del correo (Ej: Cotización, Duda, etc.)" required />
+                                <button type="button" id="btn-reset-plan" class="btn-clear-plan" title="Deseleccionar plan y escribir manualmente" onclick="deseleccionarPlan()">&times;</button>
+                            </div>
                             
                             <textarea name="Mensaje o Detalles" placeholder="Cuéntanos un poco más sobre las dimensiones o detalles de tu proyecto..." required></textarea>
                             <button type="submit" class="button-submit-modern">Enviar propuesta al estudio</button>
@@ -1243,7 +1261,7 @@
             <div class="footer-social">
                 <a href="https://www.instagram.com/oterointeriorismo/?hl=es" target="_blank" class="instagram-link">
                     <svg class="instagram-icon" viewBox="0 0 24 24">
-                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204 013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204 013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0 3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
                     </svg>
                     @oterointeriorismo
                 </a>
@@ -1296,13 +1314,41 @@
             }
         }
 
-        // SELECCIÓN DE PLANES DESDE LOS BOTONES
-        function seleccionarPlanPorBoton(idPlan) {
-            const selectComponent = document.getElementById('select-plan');
+        // SELECCIÓN DE PLANES DESDE LOS BOTONES (Actualiza Razón y Asunto)
+        function seleccionarPlanPorBoton(nombrePlan) {
+            const razonInput = document.getElementById('razon-input');
+            const btnReset = document.getElementById('btn-reset-plan');
+            const subjectInput = document.getElementById('form-subject');
             const targetBlock = document.getElementById('bloqueContactoFormulario');
             
-            selectComponent.value = idPlan;
+            // Ponemos el texto de interés detallado en el input
+            razonInput.value = "Interés en Plan " + nombrePlan;
+            razonInput.readOnly = true; // Bloqueado para evitar alteraciones accidentales
+            razonInput.style.color = "#dfb15b"; // Toque estético dorado
+            
+            // Modificamos el asunto directo de FormSubmit
+            subjectInput.value = "Nuevo Cliente - Interés en: " + nombrePlan;
+            
+            // Mostramos el pequeño botón "x" de deselección
+            btnReset.style.display = "flex";
+            
             hacerScrollRevelandoFooter(targetBlock);
+        }
+
+        // FUNCIÓN DEL BOTÓN PEQUEÑO "x" (Deselegir plan)
+        function deseleccionarPlan() {
+            const razonInput = document.getElementById('razon-input');
+            const btnReset = document.getElementById('btn-reset-plan');
+            const subjectInput = document.getElementById('form-subject');
+            
+            razonInput.value = "";
+            razonInput.readOnly = false;
+            razonInput.style.color = "#ffffff";
+            
+            subjectInput.value = "Contacto General - Otero Interiorismo";
+            btnReset.style.display = "none";
+            
+            razonInput.focus();
         }
 
         // SCROLL CINEMÁTICO GENERAL DESDE EL MENÚ NAV
